@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <title>Street View Split-Map Panes</title>
+    <script>
+
+      let map;
+      let marker;
+      let geocoder;
+      let response;
+
+      function initMap() {
+        map = new google.maps.Map(document.getElementById("map"), {
+          zoom: 8,
+          center: {lat: 33.44, lng: -112.07 },
+          mapTypeControl: false,
+        });
+        const panorama = new google.maps.StreetViewPanorama(
+          document.getElementById("pano"),
+          {
+            position: { lat: 33.44, lng: -112.07 },
+            pov: {
+              heading: 34,
+              pitch: 10,
+            },
+          }
+        );
+        map.setStreetView(panorama);
+        geocoder = new google.maps.Geocoder();
+
+        marker = new google.maps.Marker({
+          map,
+        });
+
+        map.addListener("click", (e) => {
+          geocode({ location: e.latLng });
+        });
+
+        document.getElementById("submit-button").addEventListener("click", () => {
+          const address = document.getElementById("input-text").value;
+          geocode({ address });
+        });
+
+        document.getElementById("clear-button").addEventListener("click", () => {
+          clear();
+        });
+
+        clear();
+      }
+
+      function clear() {
+        marker.setMap(null);
+        document.getElementById("response").innerText = "";
+      }
+
+      function geocode(request) {
+        clear();
+        geocoder
+          .geocode(request)
+          .then((result) => {
+            const { results } = result;
+            map.setCenter(results[0].geometry.location);
+            marker.setPosition(results[0].geometry.location);
+            marker.setMap(map);
+            console.log(JSON.stringify(results[0].geometry.location, null, 2))
+            document.getElementById("response").innerText = JSON.stringify(results[0].geometry.location, null, 2)
+          })
+          .catch((e) => {
+            alert("Geocode was not successful for the following reason: " + e);
+          });
+      }
+
+      window.initMap = initMap;
+    </script>
+    <style>
+      html,
+      body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+
+      #map,
+      #pano {
+        float: left;
+        height: 100%;
+        width: 50%;
+      }
+
+      .controls {
+        align-items: center;
+        margin-top: 50px;
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        z-index: 5;
+        background-color: transparent;
+        backdrop-filter: blur(10px);
+        padding: 30px;
+        border: 1px solid #000000;
+        border-radius: 20px;
+      }
+
+      .button {
+        margin-top: 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="map"></div>
+    <div id="pano"></div>
+
+    <div class="controls">
+      <input id="input-text" type="text" placeholder="Enter a location" class="textClass" />
+      <br />
+      <input id="submit-button" type="button" value="Geocode" class="button textClass" />
+      <input id="clear-button" type="button" value="Clear" class="button textClass" />
+      <p><strong>Instructions:</strong> Enter an address in the textbox or click on the map to choose a location    .</p>
+      <pre id="response"></pre>
+    </div>
+    <div class="blur-overlay"></div>
+    <script
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC7qASr4lWm5O3wxXvmLC4PNo4bae8HLso&callback=initMap&v=weekly&solution_channel=GMP_CCS_streetview_v2"
+      defer
+    ></script>
+  </body>
+</html>

@@ -1,0 +1,33 @@
+body{
+    font-family: googleSans;
+}
+head{
+    font-family: googleSans;
+}
+button{
+    font-family: googleSans
+}
+@font-face {
+    font-family: googleSans;
+    src: url(GoogleSans-Regular.ttf);
+    font-weight: normal;
+}
+
+.textClass{
+    font-family: googleSans;
+    text-shadow: 15px;
+}
+.responseClass {
+    border-radius: 20;
+}
+
+.blur-overlay {
+    position: absolute;
+    top: 0;
+    left: 50%; /* Center the line */
+    transform: translateX(-50%); /* Correct centering */
+    height: 100%;
+    width: 5px; /* Thickness of the line */
+    background-color: black; /* Line color */
+    z-index: 10; /* Ensure it overlays content */
+  }
