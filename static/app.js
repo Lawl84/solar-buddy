@@ -88,8 +88,5 @@ function geocode(request) {
       alert("Geocode was not successful for the following reason: " + e);
     });
 }
-function buttonclick()
-{
-  alert("Lmoa")
-}
+
 window.initMap = initMap;

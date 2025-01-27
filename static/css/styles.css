@@ -31,3 +31,53 @@ button{
     background-color: black; /* Line color */
     z-index: 10; /* Ensure it overlays content */
   }
+
+html,
+body {
+height: 100%;
+margin: 0;
+padding: 0;
+}
+
+#map,
+#pano {
+float: left;
+height: 100%;
+width: 50%;
+}
+
+.controls {
+align-items: center;
+margin-top: 50px;
+position: absolute;
+width: 30%;
+top: 10px;
+left: 10px;
+z-index: 5;
+background-color: transparent;
+backdrop-filter: blur(10px);
+padding: 30px;
+border: 1px solid #000000;
+border-radius: 20px;
+}
+
+.panel-controls {
+    align-items: center;
+    margin-top: 50px;
+    margin-left: 70%;
+    position: absolute;
+    width: 20%;
+    top: 10px;
+    z-index: 5;
+    background-color: white;
+    backdrop-filter: blur(10px);
+    padding: 30px;
+    padding-left: 60px;
+    padding-right: 0px;
+    border: 1px solid #000000;
+    border-radius: 20px;
+}
+
+.button {
+margin-top: 5px;
+}

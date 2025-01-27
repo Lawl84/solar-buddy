@@ -8,14 +8,14 @@
       let map;
       let marker;
       let geocoder;
-      let response;
 
       function initMap() {
         map = new google.maps.Map(document.getElementById("map"), {
           zoom: 8,
-          center: {lat: 33.44, lng: -112.07 },
+          center: { lat: 33.44, lng: -112.07 },
           mapTypeControl: false,
         });
+
         const panorama = new google.maps.StreetViewPanorama(
           document.getElementById("pano"),
           {
@@ -27,6 +27,7 @@
           }
         );
         map.setStreetView(panorama);
+
         geocoder = new google.maps.Geocoder();
 
         marker = new google.maps.Marker({
@@ -47,79 +48,79 @@
         });
 
         clear();
-      }
 
-      function clear() {
-        marker.setMap(null);
-        document.getElementById("response").innerText = "";
-      }
+        function updatePanorama(location) {
+          panorama.setPosition(location);
+          panorama.setPov({ heading: 34, pitch: 10 });
+        }
 
-      function geocode(request) {
-        clear();
-        geocoder
-          .geocode(request)
-          .then((result) => {
-            const { results } = result;
-            map.setCenter(results[0].geometry.location);
-            marker.setPosition(results[0].geometry.location);
-            marker.setMap(map);
-            console.log(JSON.stringify(results[0].geometry.location, null, 2))
-            document.getElementById("response").innerText = JSON.stringify(results[0].geometry.location, null, 2)
-          })
-          .catch((e) => {
-            alert("Geocode was not successful for the following reason: " + e);
-          });
+        function geocode(request) {
+          clear();
+          geocoder
+            .geocode(request)
+            .then((result) => {
+              const { results } = result;
+              const location = results[0].geometry.location;
+              map.setCenter(location);
+              marker.setPosition(location);
+              marker.setMap(map);
+              console.log(JSON.stringify(location, null, 2));
+
+              // Update Street View panorama
+              updatePanorama(location);
+
+              let lat = location.lat();
+              let lng = location.lng();
+              fetch(
+                `https://maps.googleapis.com/maps/api/elevation/json?locations=${lat}%2C${lng}&key=AIzaSyC7qASr4lWm5O3wxXvmLC4PNo4bae8HLso`
+              )
+                .then((response) => response.json())
+                .then((data) => {
+                  if (data.status === "OK" && data.results.length > 0) {
+                    const elevation = data.results[0].elevation;
+                    console.log("Elevation:", elevation);
+                    document.getElementById("response").innerText =
+                      JSON.stringify(location, null, 2) + `\nElevation: ${elevation} meters`;
+                  } else {
+                    console.error("Failed to fetch elevation data:", data.status);
+                  }
+                })
+                .catch((error) => {
+                  console.error("Error fetching the data:", error);
+                });
+            })
+            .catch((e) => {
+              alert("Geocode was not successful for the following reason: " + e);
+            });
+        }
+
+        function clear() {
+          marker.setMap(null);
+          document.getElementById("response").innerText = "";
+        }
       }
 
       window.initMap = initMap;
     </script>
-    <style>
-      html,
-      body {
-        height: 100%;
-        margin: 0;
-        padding: 0;
-      }
-
-      #map,
-      #pano {
-        float: left;
-        height: 100%;
-        width: 50%;
-      }
-
-      .controls {
-        align-items: center;
-        margin-top: 50px;
-        position: absolute;
-        top: 10px;
-        left: 10px;
-        z-index: 5;
-        background-color: transparent;
-        backdrop-filter: blur(10px);
-        padding: 30px;
-        border: 1px solid #000000;
-        border-radius: 20px;
-      }
-
-      .button {
-        margin-top: 5px;
-      }
-    </style>
   </head>
   <body>
     <div id="map"></div>
-    <div id="pano"></div>
+    <div id="pano">
+        <button>Place panel</button>
+    </div>
 
     <div class="controls">
       <input id="input-text" type="text" placeholder="Enter a location" class="textClass" />
       <br />
       <input id="submit-button" type="button" value="Geocode" class="button textClass" />
       <input id="clear-button" type="button" value="Clear" class="button textClass" />
-      <p><strong>Instructions:</strong> Enter an address in the textbox or click on the map to choose a location    .</p>
+      <p><strong>Instructions:</strong> Enter an address in the textbox or click on the map to choose a location.</p>
       <pre id="response"></pre>
     </div>
     <div class="blur-overlay"></div>
+    <div class="panel-controls">
+        <p><strong>Enter instructions for the solar panel</strong></p>
+    </div>
     <script
       src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC7qASr4lWm5O3wxXvmLC4PNo4bae8HLso&callback=initMap&v=weekly&solution_channel=GMP_CCS_streetview_v2"
       defer
