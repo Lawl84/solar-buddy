@@ -8,13 +8,16 @@
       let map;
       let marker;
       let geocoder;
-
+      let globalLat;
+      let globalLong;
       function initMap() {
         map = new google.maps.Map(document.getElementById("map"), {
           zoom: 8,
           center: { lat: 33.44, lng: -112.07 },
           mapTypeControl: false,
         });
+        globalLat = 33.44;
+        globalLong = -112.07;
 
         const panorama = new google.maps.StreetViewPanorama(
           document.getElementById("pano"),
@@ -71,6 +74,8 @@
 
               let lat = location.lat();
               let lng = location.lng();
+              globalLat = lat;
+              globalLong = lng;
               fetch(
                 `https://maps.googleapis.com/maps/api/elevation/json?locations=${lat}%2C${lng}&key=AIzaSyC7qASr4lWm5O3wxXvmLC4PNo4bae8HLso`
               )
@@ -99,15 +104,45 @@
           document.getElementById("response").innerText = "";
         }
       }
+      function sendCoordinates() {
+        console.log("jsoifajdsoifjs");
+    if (globalLat !== undefined && globalLong !== undefined) {
+        fetch('/save-coordinates', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ latitude: globalLat, longitude: globalLong }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Server response:', data);
+            if (data.output) {
+                document.getElementById("output-container").innerText = 
+                    `Output: ${data.output}`;
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    } else {
+        console.error('Coordinates not set yet');
+    }
+}
+
+
+      
+    
+
+document.getElementById("panel-button-id").addEventListener("click", sendCoordinates);
+
 
       window.initMap = initMap;
     </script>
   </head>
   <body>
     <div id="map"></div>
-    <div id="pano">
-        <button>Place panel</button>
-    </div>
+    <div id="pano"></div>
 
     <div class="controls">
       <input id="input-text" type="text" placeholder="Enter a location" class="textClass" />
@@ -119,11 +154,16 @@
     </div>
     <div class="blur-overlay"></div>
     <div class="panel-controls">
-        <p><strong>Enter instructions for the solar panel</strong></p>
+        <button value = "panel-button" id = "panel-button-id" onclick="sendCoordinates()"><strong>Set solar panel</strong></button>
+        <p id="output-container"></p>
     </div>
+    <!-- <div class = "panel-controls" id="output-container" style="padding-top: 100px"></div> -->
     <script
       src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC7qASr4lWm5O3wxXvmLC4PNo4bae8HLso&callback=initMap&v=weekly&solution_channel=GMP_CCS_streetview_v2"
       defer
     ></script>
+    <script>
+
+    </script>
   </body>
 </html>
