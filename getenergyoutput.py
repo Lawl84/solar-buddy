@@ -98,7 +98,7 @@ def find_optimal_orientation(latitude, longitude, local_time, panel_width=0.05, 
         local_time = local_time.replace(tzinfo=ZoneInfo("America/Phoenix"))
     utc_time = local_time.astimezone(datetime.timezone.utc)
 
-    print(f"Local Arizona Time: {local_time}")
+    print(f"time: {local_time}")
 
 
     sun_alt_deg = get_altitude(latitude, longitude, utc_time)
@@ -115,7 +115,7 @@ def find_optimal_orientation(latitude, longitude, local_time, panel_width=0.05, 
     dni_clear = get_radiation_direct(utc_time, sun_alt_deg)
     dni_actual = dni_clear * cloud_factor
 
-    print(f"Adjusted DNI (After Clouds): {dni_actual:.2f} W/m²")
+    print(f"adjust dni: {dni_actual:.2f} W/m²")
 
     best_power = 0.0
     best_zenith = None
