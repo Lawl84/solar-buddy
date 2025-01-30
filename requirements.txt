@@ -119,7 +119,6 @@ tzdata==2024.2
 uritemplate==4.1.1
 urllib3==1.26.12
 Werkzeug==3.0.3
-wheel @ file:///opt/homebrew/Cellar/python%403.12/3.12.6/libexec/wheel-0.44.0-py3-none-any.whl#sha256=d6ad895f80a568fbc066fd6c52c68c5ef40632c4d764d42af13e28e945f1920b
 wrapt==1.16.0
 wsproto==1.2.0
 yagmail==0.15.293
