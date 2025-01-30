@@ -24,12 +24,12 @@ button{
 .blur-overlay {
     position: absolute;
     top: 0;
-    left: 50%; /* Center the line */
-    transform: translateX(-50%); /* Correct centering */
+    left: 50%; 
+    transform: translateX(-50%);
     height: 100%;
-    width: 5px; /* Thickness of the line */
-    background-color: black; /* Line color */
-    z-index: 10; /* Ensure it overlays content */
+    width: 5px; 
+    background-color: black; 
+    z-index: 10; ]
   }
 
 html,
